@@ -47,38 +47,29 @@ impl DerefMut for ConfigFile<'_> {
 
 impl ConfigStorage {
     pub fn copy<P: AsRef<Path>, Q: AsRef<Path>>(&self, from: P, to: Q) -> io::Result<u64> {
-        let full_path_from = &self.0.join(from.as_ref());
-        let full_path_to = &self.0.join(to.as_ref());
+        let full_path_from = self.0.join(from);
+        let full_path_to = self.0.join(to);
 
-        match std::fs::copy(full_path_from, full_path_to) {
-            Ok(res) => {
-                self.flush();
-                Ok(res)
-            },
-            Err(err) => Err(err),
-        }
+        std::fs::copy(full_path_from, full_path_to).map(|res| {
+            self.flush();
+            res
+        })
     }
 
     pub fn create<P: AsRef<Path>>(&self, path: P) -> io::Result<ConfigFile<'_>> {
-        let full_path = &self.0.join(path.as_ref());
+        let full_path = self.0.join(path);
 
-        match std::fs::File::create(full_path) {
-            Ok(file) => Ok(ConfigFile(file, PhantomData)),
-            Err(err) => Err(err),
-        }
+        std::fs::File::create(full_path).map(|file| ConfigFile(file, PhantomData))
     }
 
     pub fn open<P: AsRef<Path>>(&self, path: P) -> io::Result<ConfigFile<'_>> {
-        let full_path = &self.0.join(path.as_ref());
+        let full_path = self.0.join(path);
 
-        match std::fs::File::open(full_path) {
-            Ok(file) => Ok(ConfigFile(file, PhantomData)),
-            Err(err) => Err(err),
-        }
+        std::fs::File::open(full_path).map(|file| ConfigFile(file, PhantomData))
     }
 
     pub fn remove_file<P: AsRef<Path>>(&self, path: P) -> io::Result<()> {
-        let full_path = &self.0.join(path.as_ref());
+        let full_path = self.0.join(path);
 
         std::fs::remove_file(full_path)?;
         self.flush();
@@ -86,7 +77,7 @@ impl ConfigStorage {
     }
 
     pub fn remove_dir<P: AsRef<Path>>(&self, path: P) -> io::Result<()> {
-        let full_path = &self.0.join(path.as_ref());
+        let full_path = self.0.join(path);
 
         std::fs::remove_dir(full_path)?;
         self.flush();
@@ -94,7 +85,7 @@ impl ConfigStorage {
     }
 
     pub fn remove_dir_all<P: AsRef<Path>>(&self, path: P) -> io::Result<()> {
-        let full_path = &self.0.join(path.as_ref());
+        let full_path = self.0.join(path);
 
         std::fs::remove_dir_all(full_path)?;
         self.flush();
@@ -102,8 +93,8 @@ impl ConfigStorage {
     }
 
     pub fn rename<P: AsRef<Path>, Q: AsRef<Path>>(&self, from: P, to: Q) -> io::Result<()> {
-        let full_path_from = &self.0.join(from.as_ref());
-        let full_path_to = &self.0.join(to.as_ref());
+        let full_path_from = self.0.join(from);
+        let full_path_to = self.0.join(to);
 
         std::fs::rename(full_path_from, full_path_to)?;
         self.flush();
@@ -111,13 +102,13 @@ impl ConfigStorage {
     }
 
     pub fn read<P: AsRef<Path>>(&self, path: P) -> io::Result<Vec<u8>> {
-        let full_path = &self.0.join(path.as_ref());
+        let full_path = self.0.join(path);
 
         std::fs::read(full_path)
     }
 
     pub fn read_to_string<P: AsRef<Path>>(&self, path: P) -> io::Result<String> {
-        let full_path = &self.0.join(path.as_ref());
+        let full_path = self.0.join(path);
 
         std::fs::read_to_string(full_path)
     }
@@ -127,7 +118,7 @@ impl ConfigStorage {
     }
 
     pub fn write<P: AsRef<Path>, C: AsRef<[u8]>>(&self, path: P, contents: C) -> io::Result<()> {
-        let full_path = &self.0.join(path.as_ref());
+        let full_path = self.0.join(path);
 
         std::fs::write(full_path, contents)?;
         self.flush();
