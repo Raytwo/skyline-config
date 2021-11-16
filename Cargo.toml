@@ -1,0 +1,8 @@
+[package]
+name = "skyline-config"
+version = "0.1.0"
+authors = ["Raytwo <raytwo@arcropolis.com>"]
+edition = "2018"
+
+[dependencies]
+skyline = { git = "https://github.com/ultimate-research/skyline-rs.git" }
