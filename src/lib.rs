@@ -1,7 +1,6 @@
 use std::{
     fs::{File, ReadDir},
     io,
-    io::Write,
     marker::PhantomData,
     ops::{Deref, DerefMut},
     path::Path,
@@ -81,50 +80,34 @@ impl ConfigStorage {
     pub fn remove_file<P: AsRef<Path>>(&self, path: P) -> io::Result<()> {
         let full_path = &self.0.join(path.as_ref());
 
-        match std::fs::remove_file(full_path) {
-            Ok(_) => {
-                self.flush();
-                Ok(())
-            },
-            Err(err) => Err(err),
-        }
+        std::fs::remove_file(full_path)?;
+        self.flush();
+        Ok(())
     }
 
     pub fn remove_dir<P: AsRef<Path>>(&self, path: P) -> io::Result<()> {
         let full_path = &self.0.join(path.as_ref());
 
-        match std::fs::remove_dir(full_path) {
-            Ok(_) => {
-                self.flush();
-                Ok(())
-            },
-            Err(err) => Err(err),
-        }
+        std::fs::remove_dir(full_path)?;
+        self.flush();
+        Ok(())
     }
 
     pub fn remove_dir_all<P: AsRef<Path>>(&self, path: P) -> io::Result<()> {
         let full_path = &self.0.join(path.as_ref());
 
-        match std::fs::remove_dir_all(full_path) {
-            Ok(_) => {
-                self.flush();
-                Ok(())
-            },
-            Err(err) => Err(err),
-        }
+        std::fs::remove_dir_all(full_path)?;
+        self.flush();
+        Ok(())
     }
 
     pub fn rename<P: AsRef<Path>, Q: AsRef<Path>>(&self, from: P, to: Q) -> io::Result<()> {
         let full_path_from = &self.0.join(from.as_ref());
         let full_path_to = &self.0.join(to.as_ref());
 
-        match std::fs::rename(full_path_from, full_path_to) {
-            Ok(_) => {
-                self.flush();
-                Ok(())
-            },
-            Err(err) => Err(err),
-        }
+        std::fs::rename(full_path_from, full_path_to)?;
+        self.flush();
+        Ok(())
     }
 
     pub fn read<P: AsRef<Path>>(&self, path: P) -> io::Result<Vec<u8>> {
@@ -146,13 +129,9 @@ impl ConfigStorage {
     pub fn write<P: AsRef<Path>, C: AsRef<[u8]>>(&self, path: P, contents: C) -> io::Result<()> {
         let full_path = &self.0.join(path.as_ref());
 
-        match std::fs::write(full_path, contents) {
-            Ok(_) => {
-                self.flush();
-                Ok(())
-            },
-            Err(err) => Err(err),
-        }
+        std::fs::write(full_path, contents)?;
+        self.flush();
+        Ok(())
     }
 
     fn flush(&self) {
