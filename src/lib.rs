@@ -125,7 +125,7 @@ impl ConfigStorage {
         self.flush();
     }
 
-    fn flush(&self) {
+    pub fn flush(&self) {
         unsafe {
             // This is required to actually write the files to the save data, as it is journalized.
             SaveDataCommit(skyline::c_str("config\0"));
