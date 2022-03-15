@@ -241,13 +241,17 @@ impl<CS: ConfigStorage> StorageHolder<CS> {
         }
     }
 
-    /// Delete every file in the configuration storage, as well as the directory.
+    /// Delete every file in the configuration storage.
     /// Be absolutely sure this is what you desire before calling it.
     pub fn clear_storage(&mut self) {
         self.read_dir().unwrap().for_each(|entry| {
             std::fs::remove_file(entry.unwrap().path()).unwrap();
         });
 
+        self.flush();
+    }
+
+    pub fn delete_storage(&mut self) {
         std::fs::remove_dir_all(self.0.storage_path()).unwrap();
 
         self.flush();
