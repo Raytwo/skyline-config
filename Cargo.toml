@@ -1,6 +1,6 @@
 [package]
 name = "skyline-config"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Raytwo <raytwo@arcropolis.com>"]
 edition = "2018"
 
