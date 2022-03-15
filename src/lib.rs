@@ -23,6 +23,12 @@ extern "C" {
 
 pub struct UserHandle([u64; 3]);
 
+impl UserHandle {
+    pub fn new() -> Self {
+        UserHandle([0u64; 3])
+    }
+}
+
 #[derive(Error, Debug)]
 pub enum ConfigError {
     #[error("failed to perform an operation on the file")]
@@ -62,10 +68,6 @@ impl ConfigStorage for SdCardStorage {
     fn storage_path(&self) -> PathBuf {
         self.root_path().join(&self.0)
     }
-
-    fn require_flushing(&self) -> bool {
-        false
-    }
 }
 
 /// Abstraction over the configuration directory created for your plugin for the current user.
@@ -97,8 +99,6 @@ impl DebugSavedataStorage {
 
         // Generate path for the current user so each user can have their own configuration
         let path = PathBuf::from(uid.id[0].to_string()).join(uid.id[1].to_string()).join(plugin_name);
-
-        println!("{}", path.display());
 
         Self(path)
     }
