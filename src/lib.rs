@@ -252,8 +252,10 @@ impl<CS: ConfigStorage> StorageHolder<CS> {
     }
 
     pub fn delete_storage(&mut self) {
-        std::fs::remove_dir_all(self.0.storage_path()).unwrap();
-
+        let mut path = self.0.storage_path();
+        path.pop();
+        path.pop();
+        std::fs::remove_dir_all(path).unwrap();
         self.flush();
     }
 
