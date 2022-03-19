@@ -255,8 +255,11 @@ impl<CS: ConfigStorage> StorageHolder<CS> {
         let mut path = self.0.storage_path();
         path.pop();
         path.pop();
-        std::fs::remove_dir_all(path).unwrap();
-        self.flush();
+
+        if path.exists() {
+            std::fs::remove_dir_all(path).unwrap();
+            self.flush();
+        }
     }
 
     pub fn flush(&self) {
